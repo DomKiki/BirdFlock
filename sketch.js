@@ -20,7 +20,7 @@ function draw() {
 	noFill();
 	
 	for (b of flock) {
-		b.applyACS(flock);
+		b.ACS(flock);
 		b.update();
 		b.display();
 	}
