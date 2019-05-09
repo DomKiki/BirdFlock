@@ -7,8 +7,8 @@ var options = { fov: false, vel: false, walls: false };
 var slidersDiv;
 
 var sldAli,
-	sldSep,
 	sldCoh,
+	sldSep,
 	sldMaxA,
 	sldMaxV;
 
@@ -20,7 +20,7 @@ var btnFov,
 
 function setup() {
 	
-    var canvas = createCanvas(800, 600);
+    var canvas = createCanvas(1200, 800);
 	canvas.parent("canvas");
 	
 	for (var i = 0; i < 100; i++)
@@ -29,8 +29,8 @@ function setup() {
 	slidersDiv = select("#sliders");
 	
 	sldAli  = makeSliderTR(0, 5,  1,   0.05, "Alignment");
-	sldSep  = makeSliderTR(0, 5,  1,   0.05, "Separation");
 	sldCoh  = makeSliderTR(0, 5,  1,   0.05, "Cohesion");
+	sldSep  = makeSliderTR(0, 5,  1,   0.05, "Separation");
 	
 	sldMaxA = makeSliderTR(0, 3,  0.1, 0.01, "Max Acceleration");
 	sldMaxA.changed(updateMaxA);
