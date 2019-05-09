@@ -4,6 +4,14 @@ var flock   = [];
 var walls   = [];
 var options = { fov: false, vel: false, walls: false };
 
+var slidersDiv;
+
+var sldAli,
+	sldSep,
+	sldCoh,
+	sldMaxA,
+	sldMaxV;
+
 var btnFov,
 	btnVel,
 	btnWalls;
@@ -18,16 +26,27 @@ function setup() {
 	for (var i = 0; i < 100; i++)
 		flock.push(new Boid(random(width), random(height)));
 	
+	slidersDiv = select("#sliders");
+	
+	sldAli  = makeSliderTR(0, 5,  1,   0.05, "Alignment");
+	sldSep  = makeSliderTR(0, 5,  1,   0.05, "Separation");
+	sldCoh  = makeSliderTR(0, 5,  1,   0.05, "Cohesion");
+	
+	sldMaxA = makeSliderTR(0, 3,  0.1, 0.01, "Max Acceleration");
+	sldMaxA.changed(updateMaxA);
+	sldMaxV = makeSliderTR(0, 10, 5,   0.5,  "Max Velocity");
+	sldMaxV.changed(updateMaxV);
+	
 	btnFoV = createButton("FoV")
-			.parent("canvas")
+			.parent("buttons")
 			.mouseClicked(pressFoV);
 				
 	btnVel = createButton("Velocity")
-			.parent("canvas")
+			.parent("buttons")
 			.mouseClicked(pressVel);
 	
 	btnWalls = createButton("Walls (alpha)")
-			  .parent("canvas")
+			  .parent("buttons")
 			  .mouseClicked(pressWalls);
 	
 }
@@ -54,6 +73,8 @@ function draw() {
 	
 }
 
+/****************** Buttons Callbacks ****************/
+
 function pressFoV() { 
 	options.fov = !options.fov;
 	btnFoV.style("border-style", options.fov ? "inset" : "outset");
@@ -69,6 +90,26 @@ function pressWalls() {
 	if (options.walls)
 		instantiateWalls(20);
 }
+
+/*********************** Slider **********************/
+
+function makeSliderTR(min, max, value, step, label) {
+	
+	var slidersTab = select('TABLE', slidersDiv);
+	var sld  = createSlider(min, max, value, step);
+	var tr   = createElement('tr');
+	var tdS  = createElement('td');
+	var tdL  = createElement('td', label);
+	sld.parent(tdS);
+	tdS.parent(tr);
+	tdL.parent(tr);
+	tr.parent(slidersTab);
+	
+	return sld;
+	
+}
+
+/************************ Data ***********************/
 
 function instantiateWalls(amount, size=20, minLen=80, maxLen=200) {
 	
@@ -90,3 +131,6 @@ function instantiateWalls(amount, size=20, minLen=80, maxLen=200) {
 	}
 		
 }
+
+function updateMaxA() { for (var b of flock) b.setMaxA(sldMaxA.value()); }
+function updateMaxV() { for (var b of flock) b.setMaxV(sldMaxV.value()); }

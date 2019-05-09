@@ -7,7 +7,7 @@ class Boid {
 		this.acc  = createVector();
 		
 		this.maxA = 0.1;
-		this.maxV = 4;
+		this.maxV = 5;
 		
 		this.fov  = fov;
 		this.col  = col;
@@ -43,9 +43,9 @@ class Boid {
 		}
 		
 		// Apply all vectors to acceleration
-		this.acc.add(ali);
-		this.acc.add(coh);
-		this.acc.add(sep);
+		this.acc.add(ali.mult(sldAli.value()));
+		this.acc.add(coh.mult(sldCoh.value()));
+		this.acc.add(sep.mult(sldSep.value()));
 		
 	}
 	
@@ -127,5 +127,8 @@ class Boid {
 			
 		}
 	}
+	
+	setMaxA(a) { this.maxA = a; }
+	setMaxV(v) { this.maxV = v; }
 
 }
