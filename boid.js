@@ -3,11 +3,11 @@ class Boid {
 	constructor(x, y, fov=50, col=255) {
 		
 		this.pos = createVector(x,y);
-		this.vel  = p5.Vector.random2D().setMag(random(1, 2));
+		this.vel  = p5.Vector.random2D().setMag(random(3, 5));
 		this.acc  = createVector();
 		
-		this.maxA = 0.2;
-		this.maxV = 3;
+		this.maxA = 0.1;
+		this.maxV = 4;
 		
 		this.fov  = fov;
 		this.col  = col;
@@ -49,6 +49,35 @@ class Boid {
 		
 	}
 	
+	avoid(obs, display=false) {
+		
+		// Find closest wall vertexs
+		var closest = 100000;
+		var closestPoint;
+		var p;
+		var wall;
+		for (var i = 0; i < obs.length; i++) {
+			p = obs[i].pointOnClosestVertex(this.pos, this.fov);
+			if (typeof p !== "undefined")
+				if (p.distance < closest) {
+					closest      = p.distance;
+					closestPoint = p.point;
+				}
+		}
+			
+		// Just like separation
+		if (typeof closestPoint !== "undefined") {
+			if (display) {
+				strokeWeight(6);
+				stroke(255,0,0);
+				point(closestPoint.x, closestPoint.y);
+			}
+			var counter = p5.Vector.sub(this.pos, closestPoint).div(closest).div(2);
+			this.acc.add(counter);
+		}
+		
+	}
+	
 	// Wrap world on itself
 	bound() {
 		this.pos.x = (this.pos.x + width)  % width;
@@ -69,10 +98,34 @@ class Boid {
 		
 	}
 	
-	display() {
+	display(options) {
+		
+		// Boid
 		strokeWeight(12);
 		stroke(this.col);
 		point(this.pos.x, this.pos.y);
+		
+		strokeWeight(1);
+		stroke(255);
+		
+		// Fov
+		if (options.fov)
+			ellipse(this.pos.x, this.pos.y, 2 * this.fov);
+		
+		// Velocity
+		if (options.vel) {
+			
+			var fac = 10,
+				dst = p5.Vector.add(this.pos, p5.Vector.mult(this.vel, fac)),
+				d   = dst.dist(this.pos),
+				r   = map(d, this.maxV * fac, 0, 0, 255),
+				g   = map(d, 0, this.maxV * fac, 0, 255);
+				
+			stroke(r,g,120);
+			line(this.pos.x, this.pos.y, dst.x, dst.y);
+			noStroke();
+			
+		}
 	}
 
 }
