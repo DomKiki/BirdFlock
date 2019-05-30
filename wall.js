@@ -45,13 +45,20 @@ class Wall {
 	}
 	
 	closestPointOnLine(p, i) {
-		var a = this.factors[i].A,
-			b = this.factors[i].B,
-			c = this.factors[i].C;
-		var a2b2 = (pow(a,2) + pow(b,2));
-		var x = ((pow(b,2) * p.x) - a * ((b * p.y) + c)) / a2b2;
-		var y = ((pow(a,2) * p.y) - b * ((a * p.x) + c)) / a2b2;
-		return createVector(x,y);
+		
+		var a    = this.factors[i].A,
+			b    = this.factors[i].B,
+			c    = this.factors[i].C,
+			p1   = this.points[i],
+			p2   = this.points[(i+1) % this.points.length],
+			a2b2 = (pow(a,2) + pow(b,2));
+			
+		var x = ((pow(b,2) * p.x) - a * ((b * p.y) + c)) / a2b2,
+			y = ((pow(a,2) * p.y) - b * ((a * p.x) + c)) / a2b2;
+    
+    
+		return createVector(Math.max(Math.min(p1.x, p2.x), Math.min(x, Math.max(p1.x, p2.x))),
+							Math.max(Math.min(p1.y, p2.y), Math.min(y, Math.max(p1.y, p2.y))));
 	}
 	
 	extractRatioOnLine(point, pIndex) {
@@ -71,12 +78,10 @@ class Wall {
 		for (var i = 0; i < this.points.length; i++) {
 			pOnLine = this.closestPointOnLine(target, i);
 			ratio   = this.extractRatioOnLine(pOnLine, i);
-			if ((ratio >= 0) && (ratio <= 1)) {	
-				d = pOnLine.dist(target);
-				if ((d < closest) && (d <= fov)) {
-					closest = d;
-					closestPoint = pOnLine;
-				}
+			d = pOnLine.dist(target);
+			if ((d < closest) && (d <= fov)) {
+				closest = d;
+				closestPoint = pOnLine;
 			}
 		}
 		
